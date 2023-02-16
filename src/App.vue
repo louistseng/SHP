@@ -14,6 +14,10 @@ import Footer from "./components/Footer";
 export default {
   name: "App",
   components: { Header, Footer },
+  mounted() {
+    // 通知vuex發請求，獲取商品分類三級列表數據，儲存於倉庫中，只執行一次
+    this.$store.dispatch("categoryList");
+  },
 };
 </script>
 

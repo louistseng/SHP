@@ -8,7 +8,7 @@ import 'nprogress/nprogress.css';
 
 const requests = axios.create({
     // 基礎路徑，發請求的時候，路徑當中會出現 api
-    baseURL: "api",
+    baseURL: "/api",
     // 代表請求超時的時間
     timeout: 5000,
 })

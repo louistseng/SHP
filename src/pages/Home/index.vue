@@ -5,13 +5,14 @@
     <ListContainer />
     <Recommend />
     <Like />
-    <Floor />
-    <Floor />
+    <Floor v-for="floor in floorList" :key="floor.id" :list="floor" />
     <Brand />
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 import ListContainer from "@/pages/Home/ListContainer";
 import Recommend from "@/pages/Home/Recommend";
 import Rank from "@/pages/Home/Rank";
@@ -22,6 +23,13 @@ import Brand from "@/pages/Home/Brand";
 export default {
   name: "Home",
   components: { ListContainer, Recommend, Rank, Like, Floor, Brand },
+  // floor 組件數據需遍歷，須在此處發送請求
+  mounted() {
+    this.$store.dispatch("getFloorList");
+  },
+  computed: {
+    ...mapState({ floorList: (state) => state.home.floorList }),
+  },
 };
 </script>
 
