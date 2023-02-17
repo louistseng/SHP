@@ -23,9 +23,11 @@ import Brand from "@/pages/Home/Brand";
 export default {
   name: "Home",
   components: { ListContainer, Recommend, Rank, Like, Floor, Brand },
-  // floor 組件數據需遍歷，須在此處發送請求
   mounted() {
+    // floor 組件數據需遍歷，需在此處發送請求
     this.$store.dispatch("getFloorList");
+    // 獲取用戶信息
+    this.$store.dispatch("getUserInfo");
   },
   computed: {
     ...mapState({ floorList: (state) => state.home.floorList }),

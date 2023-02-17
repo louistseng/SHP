@@ -86,6 +86,12 @@
                   :class="{ active: spuSaleAttrValue.isChecked == 1 }"
                   v-for="spuSaleAttrValue in spuSaleAttr.spuSaleAttrValueList"
                   :key="spuSaleAttrValue.id"
+                  @click="
+                    changeActive(
+                      spuSaleAttrValue,
+                      spuSaleAttr.spuSaleAttrValueList
+                    )
+                  "
                 >
                   {{ spuSaleAttrValue.saleAttrValueName }}
                 </dd>
@@ -93,12 +99,22 @@
             </div>
             <div class="cartWrap">
               <div class="controls">
-                <input autocomplete="off" class="itxt" />
-                <a href="javascript:" class="plus">+</a>
-                <a href="javascript:" class="mins">-</a>
+                <input
+                  autocomplete="off"
+                  class="itxt"
+                  v-model="skuNum"
+                  @change="changeSkuNum"
+                />
+                <a href="javascript:" class="plus" @click="skuNum++">+</a>
+                <a
+                  href="javascript:"
+                  class="mins"
+                  @click="skuNum > 1 ? skuNum-- : (skuNum = 1)"
+                  >-</a
+                >
               </div>
               <div class="add">
-                <a href="javascript:">加入购物车</a>
+                <a @click="addShopCart">加入购物车</a>
               </div>
             </div>
           </div>
@@ -342,17 +358,61 @@ import Zoom from "./Zoom/Zoom";
 import { mapGetters } from "vuex";
 export default {
   name: "Detail",
-  mounted() {
-    this.$store.dispatch("getGoodInfo", this.$route.params.skuid);
-  },
   components: {
     ImageList,
     Zoom,
+  },
+  data() {
+    return {
+      skuNum: 1,
+    };
+  },
+  mounted() {
+    this.$store.dispatch("getGoodInfo", this.$route.params.skuid);
   },
   computed: {
     ...mapGetters(["categoryView", "skuInfo", "spuSaleAttrList"]),
     skuImageList() {
       return this.skuInfo.skuImageList || [];
+    },
+  },
+  methods: {
+    // 售賣屬性值切換
+    changeActive(spuSaleAttrValue, arr) {
+      // 先遍歷所有 isChecked 為 0
+      arr.forEach((item) => {
+        item.isChecked = 0;
+      });
+      // 點擊的選項高亮
+      spuSaleAttrValue.isChecked = 1;
+    },
+    // 表單元素處理 input 內正常與不正常輸入
+    changeSkuNum(e) {
+      let value = e.target.value * 1;
+      if (isNaN(value) || value < 1) {
+        this.skuNum = 1;
+      } else {
+        this.skuNum = parseInt(value);
+      }
+    },
+    // 添加購物車
+    async addShopCart() {
+      try {
+        // 加入成功
+        await this.$store.dispatch("addOrUpdateShopCart", {
+          skuId: this.$route.params.skuid,
+          skuNum: this.skuNum,
+        });
+        // 路由跳轉
+        this.$router.push({
+          name: "addcartsuccess",
+          query: { skuNum: this.skuNum },
+        });
+        // 商品信息存儲
+        sessionStorage.setItem("SKUINFO", JSON.stringify(this.skuInfo));
+      } catch {
+        // 加入失敗
+      }
     },
   },
 };

@@ -1,6 +1,9 @@
-import { reqGoodsInfo } from '@/api';
+import { reqGoodsInfo, reqAddOrUpdateShopCart } from '@/api';
+import { getUUID } from '@/utils/uuid_token';
 const state = {
     goodInfo: {},
+    // 遊客臨時身份
+    uuid_token: getUUID(),
 };
 const mutations = {
     GETGOODINFO(state, goodInfo) {
@@ -13,6 +16,15 @@ const actions = {
         let result = await reqGoodsInfo(skuId)
         if (result.code == 200) {
             commit('GETGOODINFO', result.data)
+        }
+    },
+    // 產品添加至購物車(無返回數據，只返回成功或失敗)
+    async addOrUpdateShopCart({ commit }, { skuId, skuNum }) {
+        let result = await reqAddOrUpdateShopCart(skuId, skuNum);
+        if (result.code == 200) {
+            return 'ok'
+        } else {
+            return Promise.reject(new Error('faile'))
         }
     },
 };

@@ -6,6 +6,8 @@ vue.use(Vuex);
 import home from './home';
 import search from './search';
 import detail from './detail';
+import shopCart from './shopCart';
+import user from './user'
 
 // // 倉庫儲存數據
 // const state = {}
@@ -19,7 +21,7 @@ import detail from './detail';
 // 對外暴露 store 類的一個實例
 export default new Vuex.Store({
     // 模塊開發
-    modules: { home, search, detail }
+    modules: { home, search, detail, shopCart, user }
 
     // state,
     // mutations,

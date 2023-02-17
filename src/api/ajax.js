@@ -4,7 +4,8 @@ import axios from "axios";
 import nprogress from 'nprogress';
 // 引入進度條樣式
 import 'nprogress/nprogress.css';
-
+// 引入 store 獲取 uuid_token
+import store from '@/store';
 
 const requests = axios.create({
     // 基礎路徑，發請求的時候，路徑當中會出現 api
@@ -15,6 +16,14 @@ const requests = axios.create({
 
 // 請求攔截器：在請求之前，請求攔截器可以檢測到，可以在請求之前做一些事情
 requests.interceptors.request.use((config) => {
+    // 請求 headers 加上訪客 token 
+    if (store.state.detail.uuid_token) {
+        config.headers.userTempId = store.state.detail.uuid_token;
+    }
+    // 登入後攜帶用戶 token
+    if (store.state.user.token) {
+        config.headers.token = store.state.user.token;
+    }
     // config 配置對象：對象裡面有一個屬性很重要，headers 請求頭
     // 進度條開始
     nprogress.start()

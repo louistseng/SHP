@@ -1,11 +1,13 @@
 <template>
   <div class="spec-preview">
     <img :src="imgObj.imgUrl" />
-    <div class="event"></div>
+    <div class="event" @mousemove="handler"></div>
+    <!-- 放大圖 -->
     <div class="big">
-      <img :src="imgObj.imgUrl" />
+      <img :src="imgObj.imgUrl" ref="big" />
     </div>
-    <div class="mask"></div>
+    <!-- 遮罩  -->
+    <div class="mask" ref="mask"></div>
   </div>
 </template>
 
@@ -13,9 +15,39 @@
 export default {
   name: "Zoom",
   props: ["skuImageList"],
+  data() {
+    return {
+      currentIndex: 0,
+    };
+  },
+  mounted() {
+    // 全局事件總線，獲取兄弟組件通信索引值
+    this.$bus.$on("getIndex", (index) => {
+      this.currentIndex = index;
+    });
+  },
   computed: {
     imgObj() {
-      return this.skuImageList[0] || {};
+      return this.skuImageList[this.currentIndex] || {};
+    },
+  },
+  methods: {
+    handler(e) {
+      let mask = this.$refs.mask;
+      let big = this.$refs.big;
+      // 鼠標位置
+      let left = e.offsetX - mask.offsetWidth / 2;
+      let top = e.offsetY - mask.offsetHeight / 2;
+      // 約束範圍
+      if (left <= 0) left = 0;
+      if (left >= mask.offsetWidth) left = mask.offsetWidth;
+      if (top <= 0) top = 0;
+      if (top >= mask.offsetHeight) top = mask.offsetHeight;
+      // 修改元素left、top屬性值
+      mask.style.left = left + "px";
+      mask.style.top = top + "px";
+      big.style.left = -2 * left + "px";
+      big.style.top = -2 * top + "px";
     },
   },
 };
