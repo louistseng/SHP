@@ -5,15 +5,19 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="!userName">
             <span>请</span>
-            <a href="###">登录</a>
-            <a href="###" class="register">免费注册</a>
+            <router-link to="/login">登录</router-link>
+            <router-link to="/register" class="register">免费注册</router-link>
+          </p>
+          <p v-else>
+            <a>{{ userName }}</a>
+            <a class="register" @click="logout">退出登录</a>
           </p>
         </div>
         <div class="typeList">
-          <a href="###">我的订单</a>
-          <a href="###">我的购物车</a>
+          <router-link to="/center/myorder">我的订单</router-link>
+          <router-link to="/shopcart">我的购物车</router-link>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>
           <a href="###">企业采购</a>
@@ -26,9 +30,9 @@
     <!--头部第二行 搜索区域-->
     <div class="bottom">
       <h1 class="logoArea">
-        <a class="logo" title="尚品汇" href="###" target="_blank">
+        <router-link class="logo" title="尚品汇" to="/home">
           <img src="./images/logo.png" alt="" />
-        </a>
+        </router-link>
       </h1>
       <div class="searchArea">
         <form action="###" class="searchForm">
@@ -36,8 +40,13 @@
             type="text"
             id="autocomplete"
             class="input-error input-xxlarge"
+            v-model="keyword"
           />
-          <button class="sui-btn btn-xlarge btn-danger" type="button">
+          <button
+            class="sui-btn btn-xlarge btn-danger"
+            type="button"
+            @click="goSearch"
+          >
             搜索
           </button>
         </form>
@@ -47,7 +56,64 @@
 </template>
 
 <script>
-export default {};
+export default {
+  name: "",
+  data() {
+    return {
+      keyword: "",
+    };
+  },
+  mounted() {
+    this.$bus.$on("clear", () => {
+      this.keyword = "";
+    });
+  },
+  computed: {
+    // 用戶名稱
+    userName() {
+      return this.$store.state.user.userInfo.name;
+    },
+  },
+  methods: {
+    // 搜尋
+    goSearch() {
+      // 路由傳參 params
+      // 1. 字符串形式
+      // this.$router.push(
+      //   "/search/" + this.keyword + "?k=" + this.keyword.toUpperCase()
+      // );
+      // 2. 模板字符串
+      // this.$router.push(
+      //   `/search/${this.keyword}?k=${this.keyword.toUpperCase()}`
+      // );
+      // 3. 對象寫法
+      // this.$router.push({
+      //   name: "search",
+      //   params: { keyword: this.keyword },
+      //   // query: { k: this.keyword.toUpperCase() },
+      // });
+
+      // 如 query 參數有值帶上
+      if (this.$route.query) {
+        let location = {
+          name: "search",
+          params: { keyword: this.keyword || undefined },
+        };
+        location.query = this.$route.query;
+        this.$router.push(location);
+      }
+    },
+    // 退出登入
+    async logout() {
+      try {
+        await this.$store.dispatch("userLogout");
+        this.$router.push("/home");
+      } catch (error) {
+        alert(error.message);
+      }
+    },
+  },
+};
 </script>
 
 <style soped lang="less">
