@@ -25,6 +25,7 @@
     <button
       v-if="startNumAndEndNum.end < totalPage"
       :class="{ active: pageNo == totalPage }"
+      @click="$emit('getPageNo', totalPage)"
     >
       {{ totalPage }}
     </button>

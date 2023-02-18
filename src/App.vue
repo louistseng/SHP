@@ -1,5 +1,7 @@
 <template>
   <div id="app">
+    <!-- 自定義插件 -->
+    <!-- <h1 v-upper="msg"></h1> -->
     <Header></Header>
     <!-- 路由組件出口的地方 -->
     <router-view></router-view>
@@ -17,6 +19,11 @@ export default {
   mounted() {
     // 通知vuex發請求，獲取商品分類三級列表數據，儲存於倉庫中，只執行一次
     this.$store.dispatch("categoryList");
+  },
+  data() {
+    return {
+      msg: "abc",
+    };
   },
 };
 </script>

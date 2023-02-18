@@ -14,17 +14,34 @@ import Pagination from '@/components/Pagination';
 Vue.component(TypeNav.name, TypeNav)
 Vue.component(Carsousel.name, Carsousel)
 Vue.component(Pagination.name, Pagination)
+// element-ui 按需引入
+import { Button, MessageBox } from 'element-ui';
+Vue.component(Button.name, Button);
+// 掛載原型上寫法
+Vue.prototype.$msgbox = MessageBox;
+Vue.prototype.$alert = MessageBox.alert;
 
-
+// 引入所有 api
+import * as API from '@/api';
 // 引入 mockServe.js ---mock數據
 import '@/mock/mockServe';
 // 引入 swiper 樣式
 import "swiper/css/swiper.css";
 
+// 懶加載默認圖片
+import VueLazyload from 'vue-lazyload';
+import loadimage from '@/assets/lazy-img.gif';
 
-// import { reqCategoryList } from '@/api';
-// reqCategoryList()
-// 三級列表請求
+Vue.use(VueLazyload, {
+  loading: loadimage,
+})
+// 引入自定義插件
+import myPlugins from '@/plugins/myPlugins';
+Vue.use(myPlugins, {
+  name: 'upper',
+})
+// 引入表單校驗插件
+import '@/plugins/validate';
 
 Vue.config.productionTip = false
 
@@ -33,6 +50,8 @@ new Vue({
   // 全局事件總線配置
   beforeCreate() {
     Vue.prototype.$bus = this;
+    // 全局配置 api
+    Vue.prototype.$API = API;
   },
   // 註冊路由，組件身上都擁有 $router $route 屬性
   router,

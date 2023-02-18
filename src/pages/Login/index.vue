@@ -94,7 +94,9 @@ export default {
         phone &&
           password &&
           (await this.$store.dispatch("userLogin", { phone, password }));
-        this.$router.push("/home");
+        // 登入路由組件，看路由參數是否有包含 query 參數指定路由，若沒有跳回 home;
+        let toPath = this.$route.query.redirect || "/home";
+        this.$router.push(toPath);
       } catch (error) {
         alert(error.message);
       }

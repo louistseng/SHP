@@ -27,7 +27,7 @@ export default {
     // floor 組件數據需遍歷，需在此處發送請求
     this.$store.dispatch("getFloorList");
     // 獲取用戶信息
-    this.$store.dispatch("getUserInfo");
+    // this.$store.dispatch("getUserInfo");
   },
   computed: {
     ...mapState({ floorList: (state) => state.home.floorList }),
